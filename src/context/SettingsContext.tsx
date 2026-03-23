@@ -5,10 +5,12 @@ type Theme = 'light' | 'dark';
 export interface ColorTheme {
   id: string;
   name: string;
-  primary: string;       // HSL للوضع الفاتح
-  primaryDark: string;   // HSL للوضع الداكن
+  primary: string;
+  primaryDark: string;
   bg: string;
   bgDark: string;
+  card: string;
+  cardDark: string;
 }
 
 export const COLOR_THEMES: ColorTheme[] = [
@@ -19,6 +21,8 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '38 65% 55%',
     bg: '40 33% 96%',
     bgDark: '220 25% 10%',
+    card: '40 30% 93%',
+    cardDark: '220 22% 14%',
   },
   {
     id: 'emerald',
@@ -27,6 +31,8 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '152 55% 45%',
     bg: '150 20% 96%',
     bgDark: '160 25% 9%',
+    card: '150 18% 92%',
+    cardDark: '160 22% 13%',
   },
   {
     id: 'ocean',
@@ -35,6 +41,8 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '210 70% 55%',
     bg: '210 30% 97%',
     bgDark: '215 30% 10%',
+    card: '210 25% 93%',
+    cardDark: '215 28% 14%',
   },
   {
     id: 'rose',
@@ -43,6 +51,8 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '345 60% 58%',
     bg: '345 25% 97%',
     bgDark: '340 25% 10%',
+    card: '345 20% 93%',
+    cardDark: '340 22% 14%',
   },
   {
     id: 'purple',
@@ -51,6 +61,8 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '265 55% 62%',
     bg: '265 20% 97%',
     bgDark: '265 25% 10%',
+    card: '265 18% 93%',
+    cardDark: '265 22% 14%',
   },
   {
     id: 'slate',
@@ -59,6 +71,18 @@ export const COLOR_THEMES: ColorTheme[] = [
     primaryDark: '215 20% 60%',
     bg: '215 20% 97%',
     bgDark: '215 20% 10%',
+    card: '215 18% 93%',
+    cardDark: '215 18% 14%',
+  },
+  {
+    id: 'black',
+    name: 'أسود',
+    primary: '38 65% 50%',
+    primaryDark: '38 65% 55%',
+    bg: '0 0% 97%',
+    bgDark: '0 0% 4%',
+    card: '0 0% 93%',
+    cardDark: '0 0% 8%',
   },
 ];
 
@@ -89,11 +113,36 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
-function applyColorTheme(ct: ColorTheme, isDark: boolean) {
-  const root = document.documentElement;
-  root.style.setProperty('--primary', isDark ? ct.primaryDark : ct.primary);
-  root.style.setProperty('--ring', isDark ? ct.primaryDark : ct.primary);
-  root.style.setProperty('--background', isDark ? ct.bgDark : ct.bg);
+function applyColorTheme(ct: ColorTheme) {
+  // احذف الـ style القديم لو موجود
+  const old = document.getElementById('tagweed-theme-vars');
+  if (old) old.remove();
+
+  const style = document.createElement('style');
+  style.id = 'tagweed-theme-vars';
+  style.textContent = `
+    :root {
+      --primary: ${ct.primary} !important;
+      --ring: ${ct.primary} !important;
+      --accent: ${ct.primary} !important;
+      --background: ${ct.bg} !important;
+      --card: ${ct.card} !important;
+      --popover: ${ct.card} !important;
+      --sidebar-background: ${ct.card} !important;
+      --sidebar-primary: ${ct.primary} !important;
+    }
+    .dark {
+      --primary: ${ct.primaryDark} !important;
+      --ring: ${ct.primaryDark} !important;
+      --accent: ${ct.primaryDark} !important;
+      --background: ${ct.bgDark} !important;
+      --card: ${ct.cardDark} !important;
+      --popover: ${ct.cardDark} !important;
+      --sidebar-background: ${ct.cardDark} !important;
+      --sidebar-primary: ${ct.primaryDark} !important;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
@@ -124,7 +173,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (theme === 'dark') root.classList.add('dark');
     else root.classList.remove('dark');
     localStorage.setItem('tagweed-theme', theme);
-    applyColorTheme(colorTheme, theme === 'dark');
+    applyColorTheme(colorTheme);
   }, [theme, colorTheme]);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -138,7 +187,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setColorTheme = (ct: ColorTheme) => {
     setColorThemeState(ct);
     localStorage.setItem('tagweed-color-theme', ct.id);
-    applyColorTheme(ct, theme === 'dark');
+    applyColorTheme(ct);
   };
 
   const setReciter = (r: ReciterInfo) => {
