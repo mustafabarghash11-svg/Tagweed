@@ -1,86 +1,133 @@
-const CACHE_NAME = 'tagweed-quran-v1';
+const QURAN_CACHE = 'tagweed-quran-v2';
+const APP_CACHE = 'tagweed-app-v2';
 const API_BASE = 'https://api.alquran.cloud/v1';
 
-// عند التثبيت
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
-
-// اعتراض كل طلب
-self.addEventListener('fetch', (event) => {
-  const url = event.request.url;
-
-  // كاش فقط طلبات alquran.cloud
-  if (!url.includes('alquran.cloud')) return;
-
-  event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      // جرب الكاش أولاً
-      const cached = await cache.match(event.request);
-      if (cached) return cached;
-
-      // مو في الكاش — اجلبه من الشبكة واحفظه
-      try {
-        const response = await fetch(event.request);
-        if (response.ok) {
-          cache.put(event.request, response.clone());
-        }
-        return response;
-      } catch {
-        return new Response(JSON.stringify({ error: 'offline' }), {
-          status: 503,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    })
+  // تثبيت فوري بدون انتظار
+  event.waitUntil(
+    caches.open(APP_CACHE)
+      .then((cache) => cache.addAll(['/', '/index.html']))
+      .then(() => self.skipWaiting())
   );
 });
 
-// استقبال أمر التحميل المسبق من الصفحة
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    // احذف كل الكاش القديم
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((k) => k !== QURAN_CACHE && k !== APP_CACHE)
+          .map((k) => caches.delete(k))
+      )
+    ).then(() => clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+  const { hostname } = new URL(url);
+
+  // طلبات alquran.cloud — CacheFirst
+  if (hostname.includes('alquran.cloud')) {
+    event.respondWith(
+      caches.open(QURAN_CACHE).then(async (cache) => {
+        const cached = await cache.match(url);
+        if (cached) return cached;
+        try {
+          const res = await fetch(event.request.clone());
+          if (res && res.status === 200) cache.put(url, res.clone());
+          return res;
+        } catch {
+          return new Response('{"error":"offline"}', {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+      })
+    );
+    return;
+  }
+
+  // ملفات الموقع — NetworkFirst عشان يجيب التحديثات دائماً
+  if (url.startsWith(self.location.origin)) {
+    event.respondWith(
+      fetch(event.request.clone())
+        .then(async (res) => {
+          // حفظ النسخة الجديدة في الكاش
+          if (res && res.status === 200 && event.request.method === 'GET') {
+            const cache = await caches.open(APP_CACHE);
+            cache.put(url, res.clone());
+          }
+          return res;
+        })
+        .catch(async () => {
+          // لو ما في نت — جيب من الكاش
+          const cached = await caches.match(url);
+          if (cached) return cached;
+          if (event.request.mode === 'navigate') {
+            const index = await caches.match('/index.html');
+            if (index) return index;
+          }
+          return new Response('Offline', { status: 503 });
+        })
+    );
+    return;
+  }
+});
+
+// تحميل القرآن كاملاً
 self.addEventListener('message', async (event) => {
   if (event.data?.type !== 'DOWNLOAD_QURAN') return;
 
   const port = event.ports[0];
-  const cache = await caches.open(CACHE_NAME);
+  let cache;
+
+  try {
+    cache = await caches.open(QURAN_CACHE);
+  } catch (err) {
+    port.postMessage({ type: 'ERROR', message: 'فشل فتح الكاش: ' + err });
+    return;
+  }
+
   const TOTAL = 604;
-  const BATCH = 5;
+  const BATCH = 3;
   let loaded = 0;
 
   try {
-    // 1. السور
-    await fetch(`${API_BASE}/surah`).then(async (r) => {
-      if (r.ok) await cache.put(`${API_BASE}/surah`, r);
-    }).catch(() => {});
+    try {
+      const surahRes = await fetch(`${API_BASE}/surah`);
+      if (surahRes.ok) await cache.put(`${API_BASE}/surah`, surahRes);
+    } catch {}
 
-    // 2. كل الصفحات
     for (let start = 1; start <= TOTAL; start += BATCH) {
-      const batch = [];
-      for (let i = 0; i < BATCH && start + i <= TOTAL; i++) {
-        batch.push(start + i);
+      const pages = [];
+      for (let i = 0; i < BATCH && (start + i) <= TOTAL; i++) {
+        pages.push(start + i);
       }
 
-      await Promise.all(batch.map(async (page) => {
+      for (const page of pages) {
         const url = `${API_BASE}/page/${page}/quran-uthmani`;
-        const cached = await cache.match(url);
-        if (cached) { loaded++; return; }
+        try {
+          const existing = await cache.match(url);
+          if (existing) { loaded++; continue; }
+        } catch {}
 
+        let success = false;
         for (let attempt = 0; attempt < 3; attempt++) {
           try {
             const res = await fetch(url);
             if (res.ok) {
               await cache.put(url, res);
+              success = true;
               break;
             }
           } catch {
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
           }
         }
         loaded++;
-      }));
+      }
 
       port.postMessage({
         type: 'PROGRESS',
@@ -89,8 +136,7 @@ self.addEventListener('message', async (event) => {
         percent: Math.round((loaded / TOTAL) * 100),
       });
 
-      // استراحة قصيرة
-      await new Promise(r => setTimeout(r, 80));
+      await new Promise(r => setTimeout(r, 150));
     }
 
     port.postMessage({ type: 'DONE' });
