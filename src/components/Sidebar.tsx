@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { X, Sun, Moon, Target, Check, BookOpen, Flame, Music2, Palette, WifiOff, Download, CheckCircle2 } from 'lucide-react';
+import { X, Sun, Moon, Target, Check, BookOpen, Flame, Music2, Palette, CheckCircle2 } from 'lucide-react';
 import { useSettings, COLOR_THEMES, RECITERS } from '@/context/SettingsContext.tsx';
 import { useAudio } from '@/context/AudioContext.tsx';
-import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { toArabicNumeral } from '@/lib/quran-api';
 
 interface SidebarProps {
@@ -123,9 +122,7 @@ function DailyWirdSection() {
   );
 }
 
-// ---- الإعدادات ----
-function OfflineSection() {
-  const { downloading, progress, currentPage, done, error, download, reset, supported } = useOfflineDownload();
+// ---- الإعدادات ---
 
   if (!supported) return (
     <div className="rounded-xl bg-muted/50 px-4 py-4 text-center">
@@ -201,7 +198,7 @@ function OfflineSection() {
 }
 
 // ---- الإعدادات ----
-function SettingsSection() {
+{
   const { theme, toggleTheme, fontSize, setFontSize, colorTheme, setColorTheme, reciter, setReciter } = useSettings();
   const { setCurrentReciterApiId, nowPlaying, isPlaying } = useAudio();
 
