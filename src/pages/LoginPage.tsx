@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LogIn, Loader2, BookOpen } from 'lucide-react';
+import { LogIn, Loader as Loader2, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {

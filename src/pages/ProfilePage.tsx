@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, User, Mail, LogOut, Loader2, Save } from 'lucide-react';
+import { ArrowRight, User, Mail, LogOut, Loader as Loader2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ProfilePage() {
