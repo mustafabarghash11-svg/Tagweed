@@ -15,6 +15,7 @@ import JuzBrowser from "./pages/JuzBrowser.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import BookmarksPage from "./pages/BookmarksPage.tsx";
 import MemorizePage from "./pages/MemorizePage.tsx";
+import KhatmaPage from "./pages/KhatmaPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/bookmarks" element={<BookmarksPage />} />
                 <Route path="/memorize" element={<MemorizePage />} />
+                <Route path="/khatma" element={<KhatmaPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
