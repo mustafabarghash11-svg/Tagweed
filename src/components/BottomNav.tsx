@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Layers, Brain, Bookmark } from 'lucide-react';
+import { Home, BookOpen, Brain, Bookmark, Target } from 'lucide-react';
 import { useBookmarks } from '@/context/BookmarksContext.tsx';
 import { toArabicNumeral } from '@/lib/quran-api';
 
 const navItems = [
   { to: '/', icon: Home, label: 'الرئيسية' },
   { to: '/surah', icon: BookOpen, label: 'السور' },
-  { to: '/juz', icon: Layers, label: 'الأجزاء' },
+  { to: '/khatma', icon: Target, label: 'الختمة' },
   { to: '/memorize', icon: Brain, label: 'الحفظ' },
   { to: '/bookmarks', icon: Bookmark, label: 'المحفوظات' },
 ];
