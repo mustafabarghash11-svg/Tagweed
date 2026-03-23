@@ -16,6 +16,7 @@ import SearchPage from "./pages/SearchPage.tsx";
 import BookmarksPage from "./pages/BookmarksPage.tsx";
 import MemorizePage from "./pages/MemorizePage.tsx";
 import KhatmaPage from "./pages/KhatmaPage.tsx";
+import QuizPage from "./pages/QuizPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
                 <Route path="/bookmarks" element={<BookmarksPage />} />
                 <Route path="/memorize" element={<MemorizePage />} />
                 <Route path="/khatma" element={<KhatmaPage />} />
+                <Route path="/quiz" element={<QuizPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
