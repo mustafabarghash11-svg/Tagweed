@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 96%;
+    --foreground: 30 10% 15%;
+
+    --card: 40 30% 93%;
+    --card-foreground: 30 10% 15%;
+
+    --popover: 40 33% 96%;
+    --popover-foreground: 30 10% 15%;
+
+    --primary: 38 65% 50%;
+    --primary-foreground: 40 33% 96%;
+
+    --secondary: 35 25% 88%;
+    --secondary-foreground: 30 10% 25%;
+
+    --muted: 35 20% 90%;
+    --muted-foreground: 30 8% 46%;
+
+    --accent: 38 50% 42%;
+    --accent-foreground: 40 33% 96%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 25% 82%;
+    --input: 35 25% 82%;
+    --ring: 38 65% 50%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 40 30% 93%;
+    --sidebar-foreground: 30 10% 25%;
+    --sidebar-primary: 38 65% 50%;
+    --sidebar-primary-foreground: 40 33% 96%;
+    --sidebar-accent: 35 25% 88%;
+    --sidebar-accent-foreground: 30 10% 25%;
+    --sidebar-border: 35 25% 82%;
+    --sidebar-ring: 38 65% 50%;
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 40 20% 90%;
+
+    --card: 220 22% 14%;
+    --card-foreground: 40 20% 90%;
+
+    --popover: 220 22% 14%;
+    --popover-foreground: 40 20% 90%;
+
+    --primary: 38 65% 50%;
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 220 18% 20%;
+    --secondary-foreground: 40 20% 85%;
+
+    --muted: 220 18% 18%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 38 50% 45%;
+    --accent-foreground: 220 25% 10%;
+
+    --border: 220 18% 22%;
+    --input: 220 18% 22%;
+    --ring: 38 65% 50%;
+
+    --sidebar-background: 220 22% 12%;
+    --sidebar-foreground: 40 20% 85%;
+    --sidebar-primary: 38 65% 50%;
+    --sidebar-primary-foreground: 220 25% 10%;
+    --sidebar-accent: 220 18% 18%;
+    --sidebar-accent-foreground: 40 20% 85%;
+    --sidebar-border: 220 18% 22%;
+    --sidebar-ring: 38 65% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Tajawal', sans-serif;
+  }
+}
+
+.font-quran {
+  font-family: 'Amiri Quran', serif;
+}
+
+.font-ui {
+  font-family: 'Tajawal', sans-serif;
+}
