@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Sun, Moon, Target, Check, BookOpen, Flame, Music2, Palette, CheckCircle2 } from 'lucide-react';
+import { X, Sun, Moon, Target, Check, BookOpen, Flame, Music2, Palette } from 'lucide-react';
 import { useSettings, COLOR_THEMES, RECITERS } from '@/context/SettingsContext.tsx';
 import { useAudio } from '@/context/AudioContext.tsx';
 import { toArabicNumeral } from '@/lib/quran-api';
@@ -122,83 +122,8 @@ function DailyWirdSection() {
   );
 }
 
-// ---- الإعدادات ---
-
-  if (!supported) return (
-    <div className="rounded-xl bg-muted/50 px-4 py-4 text-center">
-      <p className="font-ui text-sm text-muted-foreground">
-        متصفحك لا يدعم الاستخدام بدون نت
-      </p>
-    </div>
-  );
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <WifiOff className="h-4 w-4 text-primary" />
-        <span className="font-ui text-sm font-bold">الاستخدام بدون نت</span>
-      </div>
-
-      {done ? (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 rounded-xl bg-green-500/10 px-4 py-3">
-            <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
-            <p className="font-ui text-sm text-green-600 dark:text-green-400 font-bold">
-              القرآن محمّل بالكامل ✓
-            </p>
-          </div>
-          <p className="font-ui text-xs text-muted-foreground text-center">
-            يمكنك قراءة القرآن بدون اتصال بالإنترنت
-          </p>
-          <button onClick={reset}
-            className="w-full rounded-lg border border-primary/15 py-2 font-ui text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-            إعادة التحميل
-          </button>
-        </div>
-      ) : downloading ? (
-        <div className="space-y-3">
-          <div className="flex justify-between font-ui text-xs text-muted-foreground">
-            <span>جارٍ تحميل القرآن...</span>
-            <span>{toArabicNumeral(progress)}%</span>
-          </div>
-          <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${progress}%` }} />
-          </div>
-          <div className="flex justify-between font-ui text-xs text-muted-foreground">
-            <span>صفحة {toArabicNumeral(currentPage)} من {toArabicNumeral(604)}</span>
-            <span>{toArabicNumeral(progress)}%</span>
-          </div>
-          <p className="font-ui text-xs text-amber-500 text-center font-bold">
-            ⚠️ لا تغلق التطبيق أثناء التحميل
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <div className="rounded-xl bg-muted/50 px-4 py-3 space-y-1.5 text-center">
-            <p className="font-ui text-xs text-muted-foreground">
-              حمّل القرآن كاملاً (٦٠٤ صفحة) مرة وحدة واقرأه بدون نت
-            </p>
-            <p className="font-ui text-xs font-bold text-primary">الحجم: ~٨ ميجابايت</p>
-          </div>
-          {error && (
-            <p className="font-ui text-xs text-red-500 text-center">
-              {error}
-            </p>
-          )}
-          <button onClick={download}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 font-ui text-sm font-bold text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all">
-            <Download className="h-4 w-4" />
-            تحميل القرآن
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ---- الإعدادات ----
-{
+function SettingsSection() {
   const { theme, toggleTheme, fontSize, setFontSize, colorTheme, setColorTheme, reciter, setReciter } = useSettings();
   const { setCurrentReciterApiId, nowPlaying, isPlaying } = useAudio();
 
@@ -297,7 +222,7 @@ function DailyWirdSection() {
   );
 }
 
-type Tab = 'wird' | 'settings' | 'offline';
+type Tab = 'wird' | 'settings';
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>('wird');
@@ -324,7 +249,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {([
             { id: 'wird', label: 'الورد', icon: Target },
             { id: 'settings', label: 'الإعدادات', icon: Palette },
-            { id: 'offline', label: 'بدون نت', icon: WifiOff },
           ] as { id: Tab; label: string; icon: any }[]).map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex flex-1 items-center justify-center gap-1 py-2.5 font-ui text-xs transition-colors ${
@@ -339,7 +263,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex-1 overflow-y-auto p-4">
           {activeTab === 'wird' && <DailyWirdSection />}
           {activeTab === 'settings' && <SettingsSection />}
-          {activeTab === 'offline' && <OfflineSection />}
         </div>
       </div>
     </>
