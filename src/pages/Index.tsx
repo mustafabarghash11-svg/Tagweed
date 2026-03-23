@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Layers, FileText, Bookmark, Search, Sun, Moon, Menu, Brain, ChevronLeft, Target } from 'lucide-react';
+import { BookOpen, Layers, FileText, Bookmark, Search, Sun, Moon, Menu, Brain, ChevronLeft, Target, HelpCircle } from 'lucide-react';
 import { useSurahs } from '@/hooks/use-quran';
 import { toArabicNumeral, SURAH_START_PAGES } from '@/lib/quran-api';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,6 +14,7 @@ const navItems = [
   { to: '/juz', icon: Layers, label: 'تصفح بالجزء', desc: '٣٠ جزء', color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
   { to: '/memorize', icon: Brain, label: 'نظام الحفظ', desc: 'راجع حفظك', color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400' },
   { to: '/khatma', icon: Target, label: 'خطة الختمة', desc: 'اختم القرآن', color: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+  { to: '/quiz', icon: HelpCircle, label: 'الأسئلة الدينية', desc: '٧ فئات', color: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' },
 ];
 
 // آخر صفحة مقروءة
