@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Layers, FileText, Bookmark, Search, Sun, Moon, Menu, Brain, ChevronLeft, Target } from 'lucide-react';
+import { BookOpen, Layers, FileText, Bookmark, Search, Sun, Moon, Menu, Brain, ChevronLeft, Target, User, LogIn } from 'lucide-react';
 import { useSurahs } from '@/hooks/use-quran';
 import { toArabicNumeral, SURAH_START_PAGES } from '@/lib/quran-api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSettings } from '@/context/SettingsContext.tsx';
 import { useBookmarks } from '@/context/BookmarksContext.tsx';
+import { useAuth } from '@/context/AuthContext.tsx';
 import { Sidebar } from '@/components/Sidebar';
 
 const navItems = [
@@ -26,6 +27,7 @@ export default function Index() {
   const { data: surahs, isLoading } = useSurahs();
   const { theme, toggleTheme } = useSettings();
   const { bookmarks } = useBookmarks();
+  const { user, profile } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const lastPage = getLastPage();
 
@@ -53,6 +55,21 @@ export default function Index() {
           </Link>
         </div>
         <div className="flex items-center gap-1.5">
+          {user ? (
+            <Link
+              to="/profile"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            >
+              <User className="h-4 w-4" />
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+            </Link>
+          )}
           <button
             onClick={toggleTheme}
             className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
