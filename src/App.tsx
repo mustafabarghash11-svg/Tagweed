@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SettingsProvider } from "@/context/SettingsContext.tsx";
 import { BookmarksProvider } from "@/context/BookmarksContext.tsx";
 import { AudioProvider } from "@/context/AudioContext.tsx";
-import { BottomNav } from "@/components/BottomNav";
+import { BottomNav } from "@/components/BottomNav.tsx";
 
 import Index from "./pages/Index.tsx";
 import QuranReader from "./pages/QuranReader.tsx";
